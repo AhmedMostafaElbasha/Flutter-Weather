@@ -24,10 +24,22 @@ class _WeatherState extends State<Weather> {
 
   @override
   Widget build(BuildContext context) {
+    final weatherBloc = BlocProvider.of<WeatherBloc>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Flutter Weather'),
         actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Settings(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
@@ -49,20 +61,19 @@ class _WeatherState extends State<Weather> {
         child: BlocConsumer<WeatherBloc, WeatherState>(
           listener: (context, state) {
             if (state is WeatherLoadSuccess) {
+              BlocProvider.of<ThemeBloc>(context).add(
+                WeatherChanged(condition: state.weather.condition),
+              );
               _refreshCompleter?.complete();
               _refreshCompleter = Completer();
             }
           },
           builder: (context, state) {
             if (state is WeatherInitial) {
-              return Center(
-                child: Text('Please Select a Location'),
-              );
+              return Center(child: Text('Please Select a Location'));
             }
             if (state is WeatherLoadInProgress) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
+              return Center(child: CircularProgressIndicator());
             }
             if (state is WeatherLoadSuccess) {
               final weather = state.weather;
@@ -79,7 +90,7 @@ class _WeatherState extends State<Weather> {
                         return _refreshCompleter.future;
                       },
                       child: ListView(
-                        children: [
+                        children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.only(top: 100.0),
                             child: Center(
@@ -92,7 +103,7 @@ class _WeatherState extends State<Weather> {
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 50.0),
                             child: Center(
-                              child: CombinedWeatherTemprature(
+                              child: CombinedWeatherTemperature(
                                 weather: weather,
                               ),
                             ),
@@ -110,7 +121,6 @@ class _WeatherState extends State<Weather> {
                 style: TextStyle(color: Colors.red),
               );
             }
-            return null;
           },
         ),
       ),

@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_weather/blocs/blocs.dart';
@@ -20,8 +22,15 @@ void main() {
     ),
   );
   runApp(
-    BlocProvider<ThemeBloc>(
-      create: (context) => ThemeBloc(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<ThemeBloc>(
+          create: (context) => ThemeBloc(),
+        ),
+        BlocProvider<SettingsBloc>(
+          create: (context) => SettingsBloc(),
+        ),
+      ],
       child: App(
         weatherRepository: weatherRepository,
       ),

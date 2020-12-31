@@ -1,13 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/blocs.dart';
 import '../models/models.dart' as model;
 import '../widgets/widgets.dart';
 
-class CombinedWeatherTemprature extends StatelessWidget {
+class CombinedWeatherTemperature extends StatelessWidget {
   final model.Weather weather;
 
-  CombinedWeatherTemprature({
+  CombinedWeatherTemperature({
     Key key,
     @required this.weather,
   })  : assert(weather != null),
@@ -26,10 +28,15 @@ class CombinedWeatherTemprature extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.all(20.0),
-              child: Temperature(
-                temprature: weather.temp,
-                high: weather.maxTemp,
-                low: weather.minTemp,
+              child: BlocBuilder<SettingsBloc, SettingsState>(
+                builder: (context, state) {
+                  return Temperature(
+                    temprature: weather.temp,
+                    high: weather.maxTemp,
+                    low: weather.minTemp,
+                    units: state.temperatureUnits,
+                  );
+                },
               ),
             ),
           ],
